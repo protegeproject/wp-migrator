@@ -1,0 +1,56 @@
+{
+  "direction": "ROW",
+  "children": [
+    {
+      "weight": 0.3,
+      "node": {
+        "direction": "COLUMN",
+        "children": [
+          {
+            "weight": 0.5421686746987951,
+            "node": {
+              "id": "N-22",
+              "portlet": "portlets.ClassHierarchy"
+            }
+          },
+          {
+            "weight": 0.4578313253012048,
+            "node": {
+              "id": "N-24",
+              "portlet": "portlets.IndividualsList"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "weight": 0.5,
+      "node": {
+        "id": "N-26",
+        "portlet": "portlets.IndividualEditor"
+      }
+    },
+    {
+      "weight": 0.2,
+      "node": {
+        "direction": "COLUMN",
+        "children": [
+          {
+            "weight": 0.6,
+            "node": {
+              "id": "N-28",
+              "portlet": "portlets.Comments"
+            }
+          },
+          {
+            "weight": 0.4,
+            "node": {
+              "id": "N-30",
+              "portlet": "portlets.ProjectFeed"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

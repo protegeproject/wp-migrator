@@ -1,0 +1,19 @@
+{
+  "direction": "ROW",
+  "children": [
+    {
+      "weight": 0.23076923076923078,
+      "node": {
+        "id": "N-79",
+        "portlet": "edu.stanford.bmir.protege.web.client.ui.ontology.classes.ClassTreePortlet"
+      }
+    },
+    {
+      "weight": 0.7692307692307693,
+      "node": {
+        "id": "N-81",
+        "portlet": "edu.stanford.bmir.protege.web.client.usage.UsagePortlet"
+      }
+    }
+  ]
+}

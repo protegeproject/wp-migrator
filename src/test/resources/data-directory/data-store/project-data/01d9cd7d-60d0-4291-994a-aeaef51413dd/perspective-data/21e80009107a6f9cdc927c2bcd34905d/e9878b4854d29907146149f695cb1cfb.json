@@ -1,0 +1,26 @@
+{
+  "direction": "ROW",
+  "children": [
+    {
+      "weight": 0.22242152466367712,
+      "node": {
+        "id": "N-3018",
+        "portlet": "edu.stanford.bmir.protege.web.client.ui.ontology.classes.ClassTreePortlet"
+      }
+    },
+    {
+      "weight": 0.49865470852017935,
+      "node": {
+        "id": "N-3020",
+        "portlet": "edu.stanford.bmir.protege.web.client.ui.editor.EditorPortlet"
+      }
+    },
+    {
+      "weight": 0.2789237668161435,
+      "node": {
+        "id": "N-3022",
+        "portlet": "edu.stanford.bmir.protege.web.client.ui.notes.DiscussionThreadPortlet"
+      }
+    }
+  ]
+}

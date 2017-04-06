@@ -1,0 +1,41 @@
+{
+  "direction": "ROW",
+  "children": [
+    {
+      "weight": 0.19827586206896552,
+      "node": {
+        "id": "N-17",
+        "portlet": "portlets.ClassHierarchy"
+      }
+    },
+    {
+      "weight": 0.4810344827586207,
+      "node": {
+        "id": "N-19",
+        "portlet": "portlets.EntityEditor"
+      }
+    },
+    {
+      "weight": 0.32068965517241377,
+      "node": {
+        "direction": "COLUMN",
+        "children": [
+          {
+            "weight": 0.4755244755244755,
+            "node": {
+              "id": "N-21",
+              "portlet": "portlets.Discussions"
+            }
+          },
+          {
+            "weight": 0.5244755244755245,
+            "node": {
+              "id": "N-23",
+              "portlet": "portlets.ProjectFeed"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

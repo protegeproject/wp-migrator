@@ -1,0 +1,49 @@
+{
+  "direction": "ROW",
+  "children": [
+    {
+      "weight": 0.29927760577915374,
+      "node": {
+        "id": "N-1",
+        "portlet": "portlets.ClassHierarchy"
+      }
+    },
+    {
+      "weight": 0.4086687306501548,
+      "node": {
+        "direction": "COLUMN",
+        "children": [
+          {
+            "weight": 0.5,
+            "node": {
+              "id": "N-3",
+              "portlet": "portlets.ClassEditor"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "weight": 0.29205366357069146,
+      "node": {
+        "direction": "COLUMN",
+        "children": [
+          {
+            "weight": 0.8453125,
+            "node": {
+              "id": "N-5",
+              "portlet": "portlets.Comments"
+            }
+          },
+          {
+            "weight": 0.1546875,
+            "node": {
+              "id": "N-7",
+              "portlet": "portlets.ProjectFeed"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

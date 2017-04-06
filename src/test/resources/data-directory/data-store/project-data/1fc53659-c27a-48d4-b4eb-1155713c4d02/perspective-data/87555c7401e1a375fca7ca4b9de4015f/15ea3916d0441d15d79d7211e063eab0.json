@@ -1,0 +1,34 @@
+{
+  "direction": "ROW",
+  "children": [
+    {
+      "weight": 0.2797494780793319,
+      "node": {
+        "direction": "COLUMN",
+        "children": [
+          {
+            "weight": 0.45151515151515154,
+            "node": {
+              "id": "N-67",
+              "portlet": "portlets.ClassHierarchy"
+            }
+          },
+          {
+            "weight": 0.5484848484848485,
+            "node": {
+              "id": "N-69",
+              "portlet": "portlets.IndividualsList"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "weight": 0.7202505219206681,
+      "node": {
+        "id": "N-71",
+        "portlet": "portlets.EntityEditor"
+      }
+    }
+  ]
+}
