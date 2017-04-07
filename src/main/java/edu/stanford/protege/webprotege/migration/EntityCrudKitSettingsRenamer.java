@@ -28,7 +28,7 @@ public class EntityCrudKitSettingsRenamer {
         this.database = checkNotNull(database);
     }
 
-    public void rename() {
+    public void performRename() {
         try {
             MongoCollection<Document> entityCrudKitSettingsCollection = database.getCollection(
                     OLD_NAME);

@@ -1,12 +1,6 @@
 package edu.stanford.protege.webprotege.migration;
 
-import com.mongodb.client.MongoDatabase;
-import edu.stanford.smi.protege.server.metaproject.MetaProject;
-import edu.stanford.smi.protege.server.metaproject.impl.MetaProjectImpl;
-
 import javax.annotation.Nonnull;
-
-import java.nio.file.Path;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -35,7 +29,7 @@ public class WebProtegeMigrator {
 
     public void performMigration() {
         // Rename collections
-        entityCrudKitSettingsRenamer.rename();
+        entityCrudKitSettingsRenamer.performRename();
 
         // Migrate metaproject
         metaProjectMigrator.performMigration();
