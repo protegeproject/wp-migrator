@@ -84,7 +84,15 @@ public class ProjectDetailsConverter {
                 changeDataExtractor.getCreatedAtTimestamp().ifPresent(createdAt -> document.append(CREATED_AT, createdAt));
                 owner.ifPresent(userId -> document.append(CREATED_BY, userId));
                 changeDataExtractor.getLastModifiedTimestamp().ifPresent(modifiedAt -> document.append(MODIFIED_AT, modifiedAt));
-                changeDataExtractor.getLastModifiedBy().ifPresent(user -> document.append(MODIFIED_BY, user));
+                changeDataExtractor.getLastModifiedBy().ifPresent(user -> {
+                    if("system".equals(user)) {
+                        document.append(MODIFIED_BY, owner.get());
+                    }
+                    else {
+                        document.append(MODIFIED_BY, user);
+                    }
+
+                });
             });
         } catch (IOException e) {
             System.out.printf("[Project %s] Could not read change data file.  Modification data not migrated. Cause: %s\n", projectId, e.getMessage());

@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class DiscussionThreadConverter {
 
-    private static final String ID = "_id";
+    private static final String ID = "id";
 
     private static final String PROJECT_ID = "projectId";
 
@@ -67,7 +67,6 @@ public class DiscussionThreadConverter {
     private Document convertToThread(Note rootNote) {
         /*
                {
-                    "_id" : "UUID",
                     "projectId" : "ProjectId",
                     "entity" : {
                         "type" : "Type name",
@@ -114,7 +113,7 @@ public class DiscussionThreadConverter {
                             "body" : "String"
                         }
          */
-        Document commentDocument = new Document("_id" , toId(note.getNoteId()));
+        Document commentDocument = new Document(ID , toId(note.getNoteId()));
         commentDocument.append("createdBy" , note.getAuthor().getUserName());
         commentDocument.append("createdAt" , note.getTimestamp());
         Optional<NoteId> inReplyTo = note.getInReplyTo();

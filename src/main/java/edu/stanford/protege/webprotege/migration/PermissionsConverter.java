@@ -49,7 +49,12 @@ public class PermissionsConverter {
         // Owners can manage their own projects
         Document ownerDocument = new Document();
         result.add(ownerDocument);
-        String projectOwner = projectInstance.getOwner().getName();
+        User owner = projectInstance.getOwner();
+        if(owner == null) {
+            System.out.printf("Owner of project is null.  Skipping permissions.\n");
+            return Collections.emptyList();
+        }
+        String projectOwner = owner.getName();
         ownerDocument.append(USER_NAME, projectOwner);
         appendProjectRoles(ownerDocument, projectId, Collections.singleton(CAN_MANAGE));
 
@@ -67,7 +72,7 @@ public class PermissionsConverter {
                 else {
                     // One document for each user that is not the owner
                     for (User user : allowedGroup.getMembers()) {
-                        if (!user.getName().equals(projectOwner)) {
+                        if (user != null && !user.getName().equals(projectOwner)) {
                             Document document = new Document();
                             result.add(document);
                             document.append(USER_NAME, user.getName());

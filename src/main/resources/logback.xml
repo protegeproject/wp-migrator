@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="10 seconds">
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%highlight(%msg) %n</Pattern>
+        </encoder>
+    </appender>
+
+    <root level="error">
+        <appender-ref ref="stdout" />
+    </root>
+
+</configuration>

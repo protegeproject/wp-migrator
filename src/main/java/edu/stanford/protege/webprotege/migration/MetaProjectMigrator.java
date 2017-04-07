@@ -42,7 +42,7 @@ public class MetaProjectMigrator {
 
     public void performMigration() {
         // Migrate the projects
-        migrateProjectDetails();
+//        migrateProjectDetails();
         migratingPermissions();
         migrateUsers();
     }
@@ -52,8 +52,10 @@ public class MetaProjectMigrator {
         // Migrate the project permissions
         MongoCollection<Document> roleAssignmentCollections = database.getCollection("RoleAssignment");
         Set<ProjectInstance> projects = metaProject.getProjects();
+        int counter = 0;
         for(ProjectInstance projectInstance : projects) {
-            System.out.printf("[Project %s] Migrating permissions\n", projectInstance.getName());
+            counter++;
+            System.out.printf("[Project %s] Migrating permissions (%d of %d)\n", projectInstance.getName(), counter, projects.size());
             PermissionsConverter converter = new PermissionsConverter(projectInstance);
             for(Document document : converter.convert()) {
                 try {
