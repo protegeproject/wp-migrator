@@ -1,7 +1,9 @@
 package edu.stanford.protege.webprotege.migration;
 
+import com.google.common.base.Optional;
 import edu.stanford.bmir.protege.web.shared.notes.DiscussionThread;
 import edu.stanford.bmir.protege.web.shared.notes.Note;
+import edu.stanford.bmir.protege.web.shared.notes.NoteId;
 import edu.stanford.bmir.protege.web.shared.notes.NoteStatus;
 import org.bson.Document;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -83,7 +85,7 @@ public class DiscussionThreadConverter {
                 }
          */
 
-        Document threadDocument = new Document(ID, UUID.randomUUID().toString());
+        Document threadDocument = new Document(ID, toId(rootNote.getNoteId()));
         threadDocument.append(PROJECT_ID, projectId);
 
         Document entityDocument = new Document();
@@ -99,6 +101,10 @@ public class DiscussionThreadConverter {
         return threadDocument;
     }
 
+    private static String toId(NoteId noteId) {
+        return noteId.getLexicalForm().substring("Note_".length());
+    }
+
     private static void convertNotesToComments(DiscussionThread thread, Note note, List<Document> documents) {
         /*
                         {
@@ -108,9 +114,14 @@ public class DiscussionThreadConverter {
                             "body" : "String"
                         }
          */
-        Document commentDocument = new Document("_id" , UUID.randomUUID().toString());
+        Document commentDocument = new Document("_id" , toId(note.getNoteId()));
         commentDocument.append("createdBy" , note.getAuthor().getUserName());
         commentDocument.append("createdAt" , note.getTimestamp());
+        Optional<NoteId> inReplyTo = note.getInReplyTo();
+        if(inReplyTo.isPresent()) {
+            commentDocument.append("replyTo", toId(inReplyTo.get()));
+        }
+
         String subject = note.getSubject();
         String body = "";
         if (!subject.isEmpty()) {

@@ -140,11 +140,6 @@ public class NotesDocumentConverter {
         return new DefaultOntologyComponent(dataFactory.getOWLNamedIndividual(entity.getIRI()), notesOntology);
     }
 
-//    private AnnotatableThing getAnnotatableThingForObjectId(NoteId noteId) {
-//        OWLNamedIndividual entity = dataFactory.getOWLNamedIndividual(IRI.create(noteId.getLexicalForm()));
-//        return new DefaultComment(entity, notesOntology);
-//    }
-
     private DiscussionThread getDiscusssionThread(OWLEntity targetEntity) {
         AnnotatableThing annotatableThing = getAnnotatableThing(targetEntity);
         Set<Note> result = new HashSet<>();
