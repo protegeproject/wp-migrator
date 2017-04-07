@@ -25,7 +25,7 @@ public class BasicProjectDetailsConverter_TestCase {
 
     @Before
     public void setUp() throws Exception {
-        URI metaProjectUri = getClass().getResource("/metaproject/metaproject.pprj").toURI();
+        URI metaProjectUri = getClass().getResource("/data-directory/metaproject/metaproject.pprj").toURI();
         metaProject = new MetaProjectImpl(metaProjectUri);
     }
 

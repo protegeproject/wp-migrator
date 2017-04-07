@@ -4,11 +4,13 @@ import com.google.common.base.Optional;
 import edu.stanford.bmir.protege.web.shared.notes.*;
 import edu.stanford.bmir.protege.web.shared.user.UserId;
 import org.bson.Document;
+import org.protege.notesapi.NotesManager;
 import org.protege.notesapi.notes.AnnotatableThing;
 import org.protege.notesapi.notes.Annotation;
 import org.protege.notesapi.oc.impl.DefaultOntologyComponent;
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentParserFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.io.OWLParserFactoryRegistry;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.SimpleIRIMapper;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
@@ -18,7 +20,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
 
-import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Matthew Horridge
@@ -32,20 +35,11 @@ public class NotesDocumentConverter {
 
     public static final IRI CHANGES_ONTOLOGY_IRI = IRI.create("http://protege.stanford.edu/ontologies/ChAO/changes.owl" );
 
-    private static final IRI ONTOLOGY_CLASS = IRI.create(
-            "http://protege.stanford.edu/ontologies/ChAO/changes.owl#Ontology_Class" );
-
-    private static final IRI ONTOLOGY_PROPERTY = IRI.create(
-            "http://protege.stanford.edu/ontologies/ChAO/changes.owl#Ontology_Property" );
-
-    private static final IRI ONTOLOGY_INDIVIDUAL = IRI.create(
-            "http://protege.stanford.edu/ontologies/ChAO/changes.owl#Ontology_Individual" );
-
     @Nonnull
     private final Path notesFile;
 
     @Nonnull
-    private final Path changeLogFile;
+    private final HasSignature signature;
 
     @Nonnull
     private final OWLDataFactory dataFactory = new OWLDataFactoryImpl();
@@ -56,15 +50,18 @@ public class NotesDocumentConverter {
 
     public NotesDocumentConverter(@Nonnull String projectId,
                                   @Nonnull Path notesFile,
-                                  @Nonnull Path changeLogFile) {
+                                  @Nonnull HasSignature signature) {
         this.projectId = checkNotNull(projectId);
         this.notesFile = checkNotNull(notesFile);
-        this.changeLogFile = checkNotNull(changeLogFile);
+        this.signature = checkNotNull(signature);
     }
 
     public List<Document> convert() {
         try {
             notesOntology = loadNotesOntology(notesFile);
+            // Believe it or not, the following line appears inconsequential, like a bug almost,
+            // but it's absolutely necessary for the proper functioning of this notes API thing.
+            NotesManager.createNotesManager(notesOntology);
             return convertNotes();
         } catch (Exception e) {
             System.out.printf("Could not load notes ontology at %s.  Cause: %s.\n" ,
@@ -76,37 +73,11 @@ public class NotesDocumentConverter {
 
     private List<Document> convertNotes() {
         List<Document> result = new ArrayList<>();
-        // Notes on classes
-        OWLClass ontologyClassComponent = dataFactory.getOWLClass(ONTOLOGY_CLASS);
-        notesOntology.getClassAssertionAxioms(ontologyClassComponent).stream()
-                     .map(OWLClassAssertionAxiom::getIndividual)
-                     .filter(OWLIndividual::isNamed)
-                     .map(OWLIndividual::asOWLNamedIndividual)
-                     .map(ind -> dataFactory.getOWLClass(ind.getIRI()))
-                     .map(this::convertEntityNotes)
-                     .forEach(result::addAll);
-        // Notes on individuals
-        OWLClass ontologyIndividualComponent = dataFactory.getOWLClass(ONTOLOGY_INDIVIDUAL);
-        notesOntology.getClassAssertionAxioms(ontologyIndividualComponent).stream()
-                     .map(OWLClassAssertionAxiom::getIndividual)
-                     .filter(OWLIndividual::isNamed)
-                     .map(OWLIndividual::asOWLNamedIndividual)
-                     .map(this::convertEntityNotes)
-                     .forEach(result::addAll);
-        // Notes on properties.  Unfortunately, properties are lumped together so we have to
-        // refer to the signature of the ontology to resolve the actual kind of property.
-        // If there are no notes on properties then we won't have to retrieve the signature.
-        HasGetEntitiesInSignatureProperties signature = new HasGetEntitiesInSignatureProperties(changeLogFile);
-        OWLClass ontologyPropertyComponent = dataFactory.getOWLClass(ONTOLOGY_PROPERTY);
-        notesOntology.getClassAssertionAxioms(ontologyPropertyComponent).stream()
-                     .map(OWLClassAssertionAxiom::getIndividual)
-                     .filter(OWLIndividual::isNamed)
-                     .map(OWLIndividual::asOWLNamedIndividual)
-                     .map(OWLNamedIndividual::getIRI)
-                     .flatMap(iri -> signature.getEntitiesInSignature(iri).stream())
-                     .map(this::convertEntityNotes)
-                     .forEach(result::addAll);
-        return result;
+        // I don't know a more efficient way of doing this with the notes api
+        return signature.getSignature().stream()
+                .map(this::convertEntityNotes)
+                .flatMap(Collection::stream)
+                .collect(toList());
     }
 
     private List<Document> convertEntityNotes(@Nonnull OWLEntity entity) {
@@ -123,8 +94,8 @@ public class NotesDocumentConverter {
 
     private static OWLOntology loadNotesOntology(@Nonnull Path notesOntologyDocument) throws OWLOntologyCreationException {
         final OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-        manager.getOntologyParsers().add(new BinaryOWLOntologyDocumentParserFactory());
-        manager.getIRIMappers().add(new SimpleIRIMapper(CHANGES_ONTOLOGY_IRI, getChangeOntologyDocumentIRI()));
+        OWLParserFactoryRegistry.getInstance().registerParserFactory(new BinaryOWLOntologyDocumentParserFactory());
+        manager.addIRIMapper(new SimpleIRIMapper(CHANGES_ONTOLOGY_IRI, getChangeOntologyDocumentIRI()));
         return manager.loadOntologyFromOntologyDocument(notesOntologyDocument.toFile());
     }
 

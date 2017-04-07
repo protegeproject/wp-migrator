@@ -97,7 +97,7 @@ public class ChangeDataExtractor {
         }
         lastTimeStamp = ts;
         BinaryOWLMetadata metadata  = list.getMetadata();
-        String user = metadata.getStringAttribute("user", null);
+        String user = metadata.getStringAttribute("username", null);
         if(user != null) {
             lastModifiedBy = user;
         }

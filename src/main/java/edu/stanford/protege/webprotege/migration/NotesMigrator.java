@@ -52,7 +52,7 @@ public class NotesMigrator {
             if(Files.exists(notesDocumentFile)) {
                 NotesDocumentConverter converter = new NotesDocumentConverter(projectId,
                                                                               notesDocumentFile,
-                                                                              changeLogFile);
+                                                                              new HasSignatureImpl(changeLogFile));
                 List<Document> threadDocuments = converter.convert();
                 if (!threadDocuments.isEmpty()) {
                     MongoCollection<Document> entityDiscussionThreadsCollection = database.getCollection(

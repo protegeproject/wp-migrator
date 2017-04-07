@@ -1,0 +1,93 @@
+; Fri Apr 07 14:31:42 PDT 2017
+; 
+;+ (version "3.5")
+;+ (build "Build 663")
+
+([e27a98c2-ab30-4d53-9131-2680962c62c8] of  Project
+
+	(allowedGroupOperation
+		[metaproject_Class2620585]
+		[metaproject_Class2620584]
+		[metaproject_Class2620587]
+		[metaproject_Class2620586]
+		[metaproject_Class2620588])
+	(description "This is a project for the WebProtege 2.6 to 3.0 migration.")
+	(displayName "Migration Test Project")
+	(inTrash FALSE)
+	(name "e27a98c2-ab30-4d53-9131-2680962c62c8")
+	(owner [metaproject_Class290000]))
+
+([e27a98c2-ab30-4d53-9131-2680962c62c8_Commenters] of  Group
+
+	(name "e27a98c2-ab30-4d53-9131-2680962c62c8_Commenters"))
+
+([e27a98c2-ab30-4d53-9131-2680962c62c8_None] of  Group
+
+	(name "e27a98c2-ab30-4d53-9131-2680962c62c8_None"))
+
+([e27a98c2-ab30-4d53-9131-2680962c62c8_Readers] of  Group
+
+	(name "e27a98c2-ab30-4d53-9131-2680962c62c8_Readers"))
+
+([e27a98c2-ab30-4d53-9131-2680962c62c8_Writers] of  Group
+
+	(member [metaproject_Class290000])
+	(name "e27a98c2-ab30-4d53-9131-2680962c62c8_Writers"))
+
+([metaproject_Class2] of  ProjectAppliedOperation
+
+	(description "The operation of displaying the project in the project list.\n\nThis is used to control the projects displayed when a user connects to a server.")
+	(name "DisplayInProjectList"))
+
+([metaproject_Class220000] of  ProjectAppliedOperation
+
+	(description "The operation of commenting on various entities in a project")
+	(name "Comment"))
+
+([metaproject_Class2620584] of  GroupOperation
+
+	(allowedGroup [e27a98c2-ab30-4d53-9131-2680962c62c8_Readers])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class2620585] of  GroupOperation
+
+	(allowedGroup [e27a98c2-ab30-4d53-9131-2680962c62c8_Commenters])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class220000]
+		[metaproject_Class2]))
+
+([metaproject_Class2620586] of  GroupOperation
+
+	(allowedGroup [e27a98c2-ab30-4d53-9131-2680962c62c8_Writers])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class2620587] of  GroupOperation
+
+	(allowedGroup [e27a98c2-ab30-4d53-9131-2680962c62c8_None]))
+
+([metaproject_Class2620588] of  GroupOperation
+)
+
+([metaproject_Class290000] of  User
+
+	(email "user.name@server.com")
+	(group [e27a98c2-ab30-4d53-9131-2680962c62c8_Writers])
+	(name "M Horridge")
+	(password "fa8fbe7e5543f760e27a03be2ad5293e")
+	(salt "0783f5dedc619c51"))
+
+([nci_metaproject_Instance_60009] of  ProjectAppliedOperation
+
+	(description "The operation of reading an ontology project.\n\nThis controls who can open a remote project.")
+	(name "Read"))
+
+([nci_metaproject_Instance_60010] of  ProjectAppliedOperation
+
+	(description "The operation of writing to an ontology project.\n\n(Enforcement not implemented yet)")
+	(name "Write"))
