@@ -72,7 +72,7 @@ public class PermissionsConverter {
                 else {
                     // One document for each user that is not the owner
                     for (User user : allowedGroup.getMembers()) {
-                        if (user != null && !user.getName().equals(projectOwner)) {
+                        if (user != null && user.getName() != null && !user.getName().equals(projectOwner)) {
                             Document document = new Document();
                             result.add(document);
                             document.append(USER_NAME, user.getName());
