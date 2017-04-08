@@ -66,7 +66,7 @@ public class HasSignatureImpl implements HasSignature {
                     .forEach(entity -> signature.add(entity));
             });
         } catch (IOException e) {
-            System.out.printf("An error occurred reading the change log: %s\n", e.getMessage());
+            System.out.printf("An error occurred reading the change log: %s %s\n", e.getClass().getSimpleName(), e.getMessage());
         }
     }
 

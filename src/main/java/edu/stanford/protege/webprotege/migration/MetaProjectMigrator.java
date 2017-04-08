@@ -42,7 +42,7 @@ public class MetaProjectMigrator {
 
     public void performMigration() {
         // Migrate the projects
-//        migrateProjectDetails();
+        migrateProjectDetails();
         migratingPermissions();
         migrateUsers();
     }

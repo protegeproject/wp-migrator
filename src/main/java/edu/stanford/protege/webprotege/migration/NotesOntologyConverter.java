@@ -29,9 +29,12 @@ import static java.util.stream.Collectors.toList;
  * 6 Apr 2017
  */
 @SuppressWarnings({"OptionalUsedAsFieldOrParameterType" , "Guava"})
-public class NotesDocumentConverter {
+public class NotesOntologyConverter {
 
-    public static final String CHANGES_ONTOLOGY_FILE_NAME = "changes.owl";
+    static {
+        // Yuck!
+        OWLParserFactoryRegistry.getInstance().registerParserFactory(new BinaryOWLOntologyDocumentParserFactory());
+    }
 
     public static final IRI CHANGES_ONTOLOGY_IRI = IRI.create("http://protege.stanford.edu/ontologies/ChAO/changes.owl" );
 
@@ -44,25 +47,28 @@ public class NotesDocumentConverter {
     @Nonnull
     private final OWLDataFactory dataFactory = new OWLDataFactoryImpl();
 
+    private final OWLOntologyManager notesManager;
+
     private OWLOntology notesOntology;
 
     private final String projectId;
 
-    public NotesDocumentConverter(@Nonnull String projectId,
+    public NotesOntologyConverter(@Nonnull String projectId,
                                   @Nonnull Path notesFile,
-                                  @Nonnull HasSignature signature) {
+                                  @Nonnull HasSignature signature,
+                                  @Nonnull OWLOntologyManager notesManager) {
         this.projectId = checkNotNull(projectId);
         this.notesFile = checkNotNull(notesFile);
         this.signature = checkNotNull(signature);
+        this.notesManager = checkNotNull(notesManager);
     }
 
     public List<Document> convert() {
         try {
             notesOntology = loadNotesOntology(notesFile);
-            // Believe it or not, the following line appears inconsequential, like a bug almost,
-            // but it's absolutely necessary for the proper functioning of this notes API thing.
-            NotesManager.createNotesManager(notesOntology);
-            return convertNotes();
+            List<Document> result = convertNotes();
+            notesManager.removeOntology(notesOntology);
+            return result;
         } catch (Exception e) {
             System.out.printf("Could not load notes ontology at %s.  Cause: %s.\n" ,
                               notesFile.toAbsolutePath().toString(),
@@ -72,6 +78,11 @@ public class NotesDocumentConverter {
     }
 
     private List<Document> convertNotes() {
+        OWLClass commentCls = dataFactory.getOWLClass(IRI.create("http://protege.stanford.edu/ontologies/ChAO/changes.owl#Comment"));
+        int notesCount = notesOntology.getClassAssertionAxioms(commentCls).size();
+        if(notesCount == 0) {
+            return Collections.emptyList();
+        }
         List<Document> result = new ArrayList<>();
         // I don't know a more efficient way of doing this with the notes api
         return signature.getSignature().stream()
@@ -92,22 +103,11 @@ public class NotesDocumentConverter {
         return threadDocuments;
     }
 
-    private static OWLOntology loadNotesOntology(@Nonnull Path notesOntologyDocument) throws OWLOntologyCreationException {
-        final OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-        OWLParserFactoryRegistry.getInstance().registerParserFactory(new BinaryOWLOntologyDocumentParserFactory());
-        manager.addIRIMapper(new SimpleIRIMapper(CHANGES_ONTOLOGY_IRI, getChangeOntologyDocumentIRI()));
-        return manager.loadOntologyFromOntologyDocument(notesOntologyDocument.toFile());
+    private OWLOntology loadNotesOntology(@Nonnull Path notesOntologyDocument) throws OWLOntologyCreationException {
+        return notesManager.loadOntologyFromOntologyDocument(notesOntologyDocument.toFile());
     }
 
-    private static IRI getChangeOntologyDocumentIRI() {
-        URL changeOntologyURL = NotesDocumentConverter.class.getResource("/" + CHANGES_ONTOLOGY_FILE_NAME);
-        if (changeOntologyURL == null) {
-            throw new RuntimeException(
-                    "Changes ontology not found.  Please make sure the changes ontology document is placed in the class path with a file name of " + CHANGES_ONTOLOGY_FILE_NAME);
-        }
-        String uriString = changeOntologyURL.toString();
-        return IRI.create(uriString);
-    }
+
 
 
     private Note getNoteForAnnotation(Annotation annotation, Optional<NoteId> inReplyTo) {

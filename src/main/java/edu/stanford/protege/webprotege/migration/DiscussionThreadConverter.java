@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class DiscussionThreadConverter {
 
-    private static final String ID = "id";
+    private static final String ID = "_id";
 
     private static final String PROJECT_ID = "projectId";
 
@@ -124,11 +124,12 @@ public class DiscussionThreadConverter {
         String subject = note.getSubject();
         String body = "";
         if (!subject.isEmpty()) {
-            body += subject;
+            commentDocument.append("subject", subject);
+            body += "# " + subject;
             body += "\n\n";
         }
-        body += note.getBody();
-        commentDocument.append("body" , body);
+        body += new NoteBodyTidy().tidy(note.getBody());
+        commentDocument.append("body" , body.trim());
         documents.add(commentDocument);
         for (Note reply : thread.getReplies(note.getNoteId())) {
             convertNotesToComments(thread, reply, documents);
