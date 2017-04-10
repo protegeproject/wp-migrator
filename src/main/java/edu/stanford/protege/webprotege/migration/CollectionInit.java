@@ -4,6 +4,7 @@ import com.mongodb.MongoNamespace;
 import com.mongodb.MongoServerException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 
 import javax.annotation.Nonnull;
@@ -44,7 +45,8 @@ public class CollectionInit {
                                                                                     NEW_NAME));
             }
             database.getCollection(DbCollections.ROLE_ASSIGNMENTS).createIndex(
-                    new Document("projectId", 1).append("userName", 1).append("unique", true)
+                    new Document("projectId", 1).append("userName", 1),
+                    new IndexOptions().unique(true)
             );
         } catch (MongoServerException e) {
             System.out.printf("An error occurred whilst renaming the %s collection to %s.  Cause: %s.\n" ,
