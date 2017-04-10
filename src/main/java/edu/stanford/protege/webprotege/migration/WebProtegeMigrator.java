@@ -29,10 +29,10 @@ public class WebProtegeMigrator {
 
     public void performMigration() {
         // Rename collections
-//        entityCrudKitSettingsRenamer.performRename();
+        entityCrudKitSettingsRenamer.performRename();
 
         // Migrate metaproject
-//        metaProjectMigrator.performMigration();
+        metaProjectMigrator.performMigration();
 
         // Migrate notes
         notesMigrator.performMigration();
