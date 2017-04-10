@@ -121,7 +121,7 @@ public class MigrateWebProtege {
             migrateWebProtege.run();
         } catch (ParseException e) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("migrate" , options);
+            formatter.printHelp("java -jar migrate-webprotege.jar" , options);
         }
 
 

@@ -51,15 +51,14 @@ public class ProjectDetailsConverter {
         Path projectDirectory = projectDirectoryResolver.resolve(projectId);
 
         if(!Files.exists(projectDirectory)) {
-            System.out.printf("[Project %s] Project directory %s does not exist.  Skipping.\n",
-                              projectId,
+            System.out.printf("\tProject directory %s does not exist.  Skipping.\n",
                               projectDirectory.toAbsolutePath());
             return Optional.empty();
         }
 
         Optional<String> owner = Optional.ofNullable(projectInstance.getOwner()).map(User::getName);
         if(!owner.isPresent()) {
-            System.out.printf("[Project %s] The owner of this project is not specified.  Skipping.\n", projectId);
+            System.out.printf("\tThe owner of this project is not specified.  Skipping.\n");
             return Optional.empty();
         }
 
@@ -70,13 +69,12 @@ public class ProjectDetailsConverter {
         // Augment with timestamps, which we extract from the change log
         Path changeDataFile = changeLogFileResolver.resolve(projectId);
         if(!Files.exists(changeDataFile)) {
-            System.out.printf("[Project %s] Change data file %s does not exist.  Skipping\n",
-                              projectId,
+            System.out.printf("\tChange data file %s does not exist.  Skipping\n",
                               changeDataFile.toAbsolutePath());
         }
         try {
             long size = Files.size(changeDataFile);
-            System.out.printf("    Size of change log: %s bytes.\n", size);
+            System.out.printf("\tSize of change log: %,d bytes.\n", size);
             ChangeDataExtractor changeDataExtractor = new ChangeDataExtractor(changeDataFile);
             changeDataExtractor.run();
 
@@ -95,7 +93,7 @@ public class ProjectDetailsConverter {
                 });
             });
         } catch (IOException e) {
-            System.out.printf("[Project %s] Could not read change data file.  Modification data not migrated. Cause: %s\n", projectId, e.getMessage());
+            System.out.printf("\tCould not read change data file.  Modification data not migrated. Cause: %s\n", e.getMessage());
         }
         return projectDetailsDocument;
     }

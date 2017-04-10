@@ -49,5 +49,6 @@ public class EntityCrudKitSettingsRenamer {
                               NEW_NAME,
                               e.getMessage());
         }
+        System.out.println("\tdone");
     }
 }

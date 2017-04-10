@@ -37,8 +37,10 @@ public class WebProtegeMigrator {
         // Migrate notes
         notesMigrator.performMigration();
 
-        System.out.println("Migration complete.");
-        System.out.println("You may remove the metaproject directory from the data directory as it is no longer used by WebProtege.");
-        System.out.println("You may also remove the notes-data directories that are contained within project data directories as these are non longer used by WebProtege.");
+        System.out.printf("------------------\n" );
+        System.out.printf("Migration complete\n");
+        System.out.printf("------------------\n\n" );
+        System.out.printf("\t- You may remove the metaproject directory from the data directory as it is no longer used by WebProtege.\n\n");
+        System.out.printf("\t- You may remove the notes-data directories that are contained within project data directories as these are non longer used by WebProtege.\n\n");
     }
 }

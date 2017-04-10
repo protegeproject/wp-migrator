@@ -12,6 +12,7 @@ import org.bson.Document;
 
 import javax.annotation.Nonnull;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +31,6 @@ public class MetaProjectMigrator {
 
     private final MongoDatabase database;
 
-
-
     public MetaProjectMigrator(@Nonnull MetaProject metaProject,
                                @Nonnull ProjectDetailsConverterFactory projectDetailsConverterFactory,
                                @Nonnull MongoDatabase database) {
@@ -41,14 +40,15 @@ public class MetaProjectMigrator {
     }
 
     public void performMigration() {
-        // Migrate the projects
-        migrateProjectDetails();
-        migratingPermissions();
         migrateUsers();
+        migrateProjectDetails();
+        migratePermissions();
     }
 
-    private void migratingPermissions() {
-        System.out.println("Migrating project permissions");
+    private void migratePermissions() {
+        System.out.printf("-----------------------------\n" );
+        System.out.printf("Migrating project permissions\n");
+        System.out.printf("-----------------------------\n\n");
         // Migrate the project permissions
         MongoCollection<Document> roleAssignmentCollections = database.getCollection("RoleAssignment");
         Set<ProjectInstance> projects = metaProject.getProjects();
@@ -57,60 +57,76 @@ public class MetaProjectMigrator {
             counter++;
             System.out.printf("[Project %s] Migrating permissions (%d of %d)\n", projectInstance.getName(), counter, projects.size());
             PermissionsConverter converter = new PermissionsConverter(projectInstance);
-            for(Document document : converter.convert()) {
+            List<Document> convert = converter.convert();
+            for(Document document : convert) {
                 try {
                     roleAssignmentCollections.insertOne(document);
                 } catch (Exception e) {
-                    System.out.printf("An error occurred whilst inserting role assignments for project %s.  " +
-                                              "Role assignments for this project have been skipped.  Cause: %s.\n",
+                    System.out.printf("\tAn error occurred whilst inserting role assignments for project %s.  " +
+                                              "Role assignments for this project have been skipped.\n\tCause: %s.\n",
                                       projectInstance.getName(),
                                       e.getMessage());
                 }
             }
+            System.out.printf("\tMigrated %d permissions\n\n", convert.size());
         }
+        System.out.printf("Finished migrating project permissions\n\n");
     }
 
     private void migrateUsers() {
-        System.out.println("Migrating users");
+        System.out.printf("---------------\n");
+        System.out.printf("Migrating users\n");
+        System.out.printf("---------------\n\n");
         // Migrate the Users
         MongoCollection<Document> usersCollection = database.getCollection("Users");
-        for(User user : metaProject.getUsers()) {
+        Set<User> users = metaProject.getUsers();
+        int counter = 0;
+        for(User user : users) {
+            counter++;
+            System.out.printf("[User '%s'] (%d of %d)\n", user.getName(), counter, users.size());
             try {
                 UserDetailsConverter converter = new UserDetailsConverter(user);
                 converter.convert().ifPresent(usersCollection::insertOne);
+                System.out.printf("\tMigrated user\n\n");
             } catch (Exception e) {
-                System.out.printf("An error occurred whilst inserting the user details for %s.  " +
-                                          "This user has been skipped.  Cause: %s.\n",
+                System.out.printf("\tAn error occurred whilst inserting the user details for %s.  " +
+                                          "This user has been skipped.\n\tCause: %s.\n\n",
                                   user.getName(),
                                   e.getMessage());
             }
         }
+        System.out.printf("Finished migrating users\n\n");
     }
 
     private void migrateProjectDetails() {
-        System.out.println("Migrating project details");
+        System.out.printf("-------------------------\n");
+        System.out.printf("Migrating project details\n");
+        System.out.printf("-------------------------\n\n");
+
         MongoCollection<Document> projectDetailsCollection = database.getCollection("ProjectDetails");
         Set<ProjectInstance> projects = metaProject.getProjects();
         int projectCount = projects.size();
         int count = 0;
         for(ProjectInstance projectInstance : projects) {
+            Stopwatch stopwatch = Stopwatch.createStarted();
             try {
                 count++;
-                Stopwatch stopwatch = Stopwatch.createStarted();
                 System.out.printf("[Project %s] (%d/%d) Migrating project details\n", projectInstance.getName(), count, projectCount);
                 ProjectDetailsConverter converter = projectDetailsConverterFactory.get(projectInstance);
                 converter.convert().ifPresent(projectDetailsCollection::insertOne);
-                System.out.printf("\tFinished in %d ms\n", stopwatch.elapsed(TimeUnit.MILLISECONDS));
             } catch (DuplicateKeyException e) {
                 System.out.printf("\tProject details already exist for %s.  " +
                                           "This project has been skipped.\n",
                                   projectInstance.getName());
             } catch (MongoException e) {
                 System.out.printf("\tAn error occurred whilst inserting the project details for %s.  " +
-                                          "This project has been skipped.  Cause: %s.\n",
+                                          "This project has been skipped.\n\tCause: %s.\n",
                                   projectInstance.getName(),
                                   e.getMessage());
+            } finally {
+                System.out.printf("\tFinished in %d ms\n\n", stopwatch.elapsed(TimeUnit.MILLISECONDS));
             }
         }
+        System.out.printf("Finished migrating project details\n\n");
     }
 }

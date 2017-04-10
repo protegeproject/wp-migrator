@@ -74,6 +74,7 @@ public class NotesMigrator {
 
     public void performMigration() {
         try {
+            System.out.printf("Migrating notes\n");
             notesManager.addIRIMapper(new SimpleIRIMapper(CHANGES_ONTOLOGY_IRI, getChangeOntologyDocumentIRI()));
             OWLOntology chao = notesManager.loadOntology(CHANGES_ONTOLOGY_IRI);
             // Believe it or not, the following line appears inconsequential, like a bug almost,
@@ -99,17 +100,24 @@ public class NotesMigrator {
                                 ENTITY_DISCUSSION_THREADS_COLLECTION);
                         try {
                             entityDiscussionThreadsCollection.insertMany(threadDocuments);
+                            System.out.printf("\tMigrated notes for project\n\n");
                         } catch (Exception e) {
-                            System.out.printf("There was a problem inserting the discussion threads for %s.  Threads not inserted. Cause: %s\n",
+                            System.out.printf("\tThere was a problem inserting the discussion threads for %s.  Threads not inserted.\n\tCause: %s\n\n",
                                               projectId,
                                               e.getMessage());
                         }
                     }
-
+                    else {
+                        System.out.printf("\tNo notes to migrate\n\n");
+                    }
+                }
+                else {
+                    System.out.printf("\tNo notes to migrate\n\n");
                 }
             }
         } catch (OWLOntologyCreationException | NotesException e) {
-            System.out.printf("An error occurred loading the notes ontology.  Cannot migrate notes. Cause: %s", e.getMessage());
+            System.out.printf("\tAn error occurred loading the notes ontology.  Cannot migrate notes.\n\tCause: %s", e.getMessage());
         }
+        System.out.printf("\tFinished migrating notes\n\n");
     }
 }
