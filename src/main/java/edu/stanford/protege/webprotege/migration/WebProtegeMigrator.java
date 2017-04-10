@@ -12,24 +12,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class WebProtegeMigrator {
 
     @Nonnull
-    private final EntityCrudKitSettingsRenamer entityCrudKitSettingsRenamer;
+    private final CollectionInit collectionInit;
 
     @Nonnull
     private final MetaProjectMigrator metaProjectMigrator;
 
     private final NotesMigrator notesMigrator;
 
-    public WebProtegeMigrator(@Nonnull EntityCrudKitSettingsRenamer entityCrudKitSettingsRenamer,
+    public WebProtegeMigrator(@Nonnull CollectionInit collectionInit,
                               @Nonnull MetaProjectMigrator metaProjectMigrator,
                               @Nonnull NotesMigrator notesMigrator) {
-        this.entityCrudKitSettingsRenamer = checkNotNull(entityCrudKitSettingsRenamer);
+        this.collectionInit = checkNotNull(collectionInit);
         this.metaProjectMigrator = checkNotNull(metaProjectMigrator);
         this.notesMigrator = checkNotNull(notesMigrator);
     }
 
     public void performMigration() {
         // Rename collections
-        entityCrudKitSettingsRenamer.performRename();
+        collectionInit.initCollections();
 
         // Migrate metaproject
         metaProjectMigrator.performMigration();

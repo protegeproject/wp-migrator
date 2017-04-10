@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Stanford Center for Biomedical Informatics Research
  * 6 Apr 2017
  */
-public class EntityCrudKitSettingsRenamer {
+public class CollectionInit {
 
     private static final String OLD_NAME = "projectEntityCrudKitSettings";
 
@@ -26,23 +26,26 @@ public class EntityCrudKitSettingsRenamer {
     @Nonnull
     private final MongoDatabase database;
 
-    public EntityCrudKitSettingsRenamer(@Nonnull MongoDatabase database) {
+    public CollectionInit(@Nonnull MongoDatabase database) {
         this.database = checkNotNull(database);
     }
 
-    public void performRename() {
-        System.out.println("Renaming mongodb collections" );
+    public void initCollections() {
+        System.out.println("Initialising mongodb collections" );
         try {
-            Optional<String> collection = StreamSupport.stream(database.listCollectionNames().spliterator(), false)
+            Optional<String> crudKitCollection = StreamSupport.stream(database.listCollectionNames().spliterator(), false)
                                                        .filter(name -> name.equals(OLD_NAME))
                                                        .findFirst();
-            if (!collection.isPresent()) {
-                return;
+            if (crudKitCollection.isPresent()) {
+
+                MongoCollection<Document> entityCrudKitSettingsCollection = database.getCollection(
+                        OLD_NAME);
+                entityCrudKitSettingsCollection.renameCollection(new MongoNamespace(database.getName(),
+                                                                                    NEW_NAME));
             }
-            MongoCollection<Document> entityCrudKitSettingsCollection = database.getCollection(
-                    OLD_NAME);
-            entityCrudKitSettingsCollection.renameCollection(new MongoNamespace(database.getName(),
-                                                                                NEW_NAME));
+            database.getCollection(DbCollections.ROLE_ASSIGNMENTS).createIndex(
+                    new Document("projectId", 1).append("userName", 1).append("unique", true)
+            );
         } catch (MongoServerException e) {
             System.out.printf("An error occurred whilst renaming the %s collection to %s.  Cause: %s.\n" ,
                               OLD_NAME,

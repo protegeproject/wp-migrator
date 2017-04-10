@@ -87,7 +87,7 @@ public class MetaProjectMigrator_TestCase {
 
     @Test
     public void shouldMigratePermissions() {
-        MongoCollection<Document> users = database.getCollection("RoleAssignment");
+        MongoCollection<Document> users = database.getCollection(DbCollections.ROLE_ASSIGNMENTS);
         Document document = users.find().first();
         assertThat(document.getString("projectId"), is("e27a98c2-ab30-4d53-9131-2680962c62c8"));
         assertThat(document.getString("userName"), is("M Horridge"));

@@ -48,7 +48,7 @@ public class MigrateWebProtege {
             MetaProject metaProject = new MetaProjectImpl(metaProjectResolver.resolve().toUri());
             ChangeLogFileResolver changeLogFileResolver = new ChangeLogFileResolver(projectDirectoryResolver);
             WebProtegeMigrator migrator = new WebProtegeMigrator(
-                    new EntityCrudKitSettingsRenamer(database),
+                    new CollectionInit(database),
                     new MetaProjectMigrator(metaProject,
                                             new ProjectDetailsConverterFactory(projectDirectoryResolver,
                                                                                changeLogFileResolver),

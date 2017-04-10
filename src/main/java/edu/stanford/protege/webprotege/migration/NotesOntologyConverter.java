@@ -4,19 +4,15 @@ import com.google.common.base.Optional;
 import edu.stanford.bmir.protege.web.shared.notes.*;
 import edu.stanford.bmir.protege.web.shared.user.UserId;
 import org.bson.Document;
-import org.protege.notesapi.NotesManager;
 import org.protege.notesapi.notes.AnnotatableThing;
 import org.protege.notesapi.notes.Annotation;
 import org.protege.notesapi.oc.impl.DefaultOntologyComponent;
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentParserFactory;
-import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.OWLParserFactoryRegistry;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.util.SimpleIRIMapper;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import javax.annotation.Nonnull;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
 

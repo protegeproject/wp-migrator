@@ -50,7 +50,7 @@ public class MetaProjectMigrator {
         System.out.printf("Migrating project permissions\n");
         System.out.printf("-----------------------------\n\n");
         // Migrate the project permissions
-        MongoCollection<Document> roleAssignmentCollections = database.getCollection("RoleAssignment");
+        MongoCollection<Document> roleAssignmentCollections = database.getCollection(DbCollections.ROLE_ASSIGNMENTS);
         Set<ProjectInstance> projects = metaProject.getProjects();
         int counter = 0;
         for(ProjectInstance projectInstance : projects) {
@@ -78,7 +78,7 @@ public class MetaProjectMigrator {
         System.out.printf("Migrating users\n");
         System.out.printf("---------------\n\n");
         // Migrate the Users
-        MongoCollection<Document> usersCollection = database.getCollection("Users");
+        MongoCollection<Document> usersCollection = database.getCollection(DbCollections.USERS);
         Set<User> users = metaProject.getUsers();
         int counter = 0;
         for(User user : users) {
@@ -103,7 +103,7 @@ public class MetaProjectMigrator {
         System.out.printf("Migrating project details\n");
         System.out.printf("-------------------------\n\n");
 
-        MongoCollection<Document> projectDetailsCollection = database.getCollection("ProjectDetails");
+        MongoCollection<Document> projectDetailsCollection = database.getCollection(DbCollections.PROJECT_DETAILS);
         Set<ProjectInstance> projects = metaProject.getProjects();
         int projectCount = projects.size();
         int count = 0;
