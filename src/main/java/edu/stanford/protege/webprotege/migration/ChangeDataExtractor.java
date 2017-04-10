@@ -28,9 +28,9 @@ public class ChangeDataExtractor {
 
     private final Path changeDataFile;
 
-    private long firstTimeStamp = -1;
+    private long firstTimeStamp = -1L;
 
-    private long lastTimeStamp = -1;
+    private long lastTimeStamp = -1L;
 
     @Nullable
     private String lastModifiedBy = null;
@@ -43,12 +43,12 @@ public class ChangeDataExtractor {
 
     public void run() throws IOException {
         BinaryOWLOntologyChangeLog changeLog = new BinaryOWLOntologyChangeLog();
-        BufferedInputStream is = new BufferedInputStream(Files.newInputStream(changeDataFile), _100_MEGS);
-        changeLog.readChanges(is,
-                              new OWLDataFactoryImpl(),
-                              (list, skipSetting, filePosition) -> handleChangeData(list),
-                              SkipSetting.SKIP_DATA);
-        is.close();
+        try(BufferedInputStream is = new BufferedInputStream(Files.newInputStream(changeDataFile), _100_MEGS)) {
+            changeLog.readChanges(is,
+                                  new OWLDataFactoryImpl(),
+                                  (list, skipSetting, filePosition) -> handleChangeData(list),
+                                  SkipSetting.SKIP_DATA);
+        }
     }
 
     /**
@@ -72,7 +72,7 @@ public class ChangeDataExtractor {
      */
     @Nonnull
     public Optional<Long> getLastModifiedTimestamp() {
-        if(lastTimeStamp == -1) {
+        if(lastTimeStamp == -1L) {
             return Optional.empty();
         }
         else {
@@ -92,7 +92,7 @@ public class ChangeDataExtractor {
 
     private void handleChangeData(OntologyChangeRecordList list) {
         long ts = list.getTimestamp();
-        if(firstTimeStamp == -1) {
+        if(firstTimeStamp == -1L) {
             firstTimeStamp = ts;
         }
         lastTimeStamp = ts;
