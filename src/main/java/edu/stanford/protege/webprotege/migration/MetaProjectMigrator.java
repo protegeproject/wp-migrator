@@ -100,13 +100,13 @@ public class MetaProjectMigrator {
                 System.out.printf("[Project %s] (%d/%d) Migrating project details\n", projectInstance.getName(), count, projectCount);
                 ProjectDetailsConverter converter = projectDetailsConverterFactory.get(projectInstance);
                 converter.convert().ifPresent(projectDetailsCollection::insertOne);
-                System.out.printf("    ... finished in %d ms\n", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+                System.out.printf("\tFinished in %d ms\n", stopwatch.elapsed(TimeUnit.MILLISECONDS));
             } catch (DuplicateKeyException e) {
-                System.out.printf("Project details already exist for %s.  " +
+                System.out.printf("\tProject details already exist for %s.  " +
                                           "This project has been skipped.\n",
                                   projectInstance.getName());
             } catch (MongoException e) {
-                System.out.printf("An error occurred whilst inserting the project details for %s.  " +
+                System.out.printf("\tAn error occurred whilst inserting the project details for %s.  " +
                                           "This project has been skipped.  Cause: %s.\n",
                                   projectInstance.getName(),
                                   e.getMessage());
