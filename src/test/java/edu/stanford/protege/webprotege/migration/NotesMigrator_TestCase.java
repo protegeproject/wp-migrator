@@ -80,7 +80,7 @@ public class NotesMigrator_TestCase {
 
     @After
     public void tearDown() {
-//        database.drop();
+        database.drop();
         mongoClient.close();
     }
 }
