@@ -3,14 +3,9 @@ package edu.stanford.protege.webprotege.migration;
 import edu.stanford.smi.protege.server.metaproject.ProjectInstance;
 import edu.stanford.smi.protege.server.metaproject.User;
 import org.bson.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -71,14 +66,15 @@ public class ProjectDetailsConverter {
         if(!Files.exists(changeDataFile)) {
             System.out.printf("\tChange data file %s does not exist.  Skipping\n",
                               changeDataFile.toAbsolutePath());
+            return Optional.empty();
         }
-        try {
-            long size = Files.size(changeDataFile);
-            System.out.printf("\tSize of change log: %,d bytes.\n", size);
-            ChangeDataExtractor changeDataExtractor = new ChangeDataExtractor(changeDataFile);
-            changeDataExtractor.run();
+        projectDetailsDocument.ifPresent(document -> {
+            try {
+                long size = Files.size(changeDataFile);
+                System.out.printf("\tSize of change log: %,d bytes.\n", size);
+                ChangeDataExtractor changeDataExtractor = new ChangeDataExtractor(changeDataFile);
+                changeDataExtractor.run();
 
-            projectDetailsDocument.ifPresent(document -> {
                 changeDataExtractor.getCreatedAtTimestamp().ifPresent(createdAt -> document.append(CREATED_AT, createdAt));
                 owner.ifPresent(userId -> document.append(CREATED_BY, userId));
                 changeDataExtractor.getLastModifiedTimestamp().ifPresent(modifiedAt -> document.append(MODIFIED_AT, modifiedAt));
@@ -91,10 +87,10 @@ public class ProjectDetailsConverter {
                     }
 
                 });
-            });
-        } catch (IOException e) {
-            System.out.printf("\tCould not read change data file.  Modification data not migrated. Cause: %s\n", e.getMessage());
-        }
+            } catch (IOException e) {
+                System.out.printf("\tCould not read change data file.  Modification data not migrated. Cause: %s\n", e.getMessage());
+            }
+        });
         return projectDetailsDocument;
     }
 

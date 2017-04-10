@@ -67,10 +67,10 @@ public class MetaProjectMigrator_TestCase {
         assertThat(projectDetailsDocument.getString("displayName"), is("Migration Test Project"));
         assertThat(projectDetailsDocument.getString("description"), is("This is a project for the WebProtege 2.6 to 3.0 migration."));
 
-        assertThat(projectDetailsDocument.getLong("createdAt"), is(greaterThan(0L)));
+        assertThat(projectDetailsDocument.getLong("createdAt"), is(1491584695423L));
         assertThat(projectDetailsDocument.getString("createdBy"), is("M Horridge"));
 
-        assertThat(projectDetailsDocument.getLong("modifiedAt"), is(greaterThan(0L)));
+        assertThat(projectDetailsDocument.getLong("modifiedAt"), is(1491584850790L));
         assertThat(projectDetailsDocument.getString("modifiedBy"), is("M Horridge"));
     }
 

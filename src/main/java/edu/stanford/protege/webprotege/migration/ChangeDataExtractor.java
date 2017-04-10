@@ -47,7 +47,7 @@ public class ChangeDataExtractor {
             changeLog.readChanges(is,
                                   new OWLDataFactoryImpl(),
                                   (list, skipSetting, filePosition) -> handleChangeData(list),
-                                  SkipSetting.SKIP_DATA);
+                                  SkipSetting.SKIP_NONE);
         }
     }
 
