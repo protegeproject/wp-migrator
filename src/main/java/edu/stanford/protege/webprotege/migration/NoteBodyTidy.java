@@ -33,10 +33,14 @@ public class NoteBodyTidy {
 
     @Nonnull
     public String tidy(@Nonnull String body) {
-        String replacedPElements = pPattern.matcher(body).replaceAll("\n\n").replace("\n\n\n\n", "\n\n").trim();
-        String replacedBElements = bPattern.matcher(replacedPElements).replaceAll("**");
-        String replacedBrElements = brPattern.matcher(replacedBElements).replaceAll("\n").trim();
-        String replacedDivs = divPattern.matcher(replacedBrElements).replaceAll("");
+        String replacedPElements = replaceParagraphElements(body);
+        String replacedBElements = replaceBoldElements(replacedPElements);
+        String replacedBrElements = replaceBreakElements(replacedBElements);
+        String replacedDivs = replaceEmptyDivElements(replacedBrElements);
+        return removeOutermostDiv(replacedDivs);
+    }
+
+    private String removeOutermostDiv(String replacedDivs) {
         if(replacedDivs.startsWith("<div>") && replacedDivs.endsWith("</div>")) {
             return replacedDivs.substring(5, replacedDivs.length() - 6);
         }
@@ -44,4 +48,22 @@ public class NoteBodyTidy {
             return replacedDivs;
         }
     }
+
+    private String replaceEmptyDivElements(String replacedBrElements) {
+        return divPattern.matcher(replacedBrElements).replaceAll("");
+    }
+
+    private String replaceBreakElements(String replacedBElements) {
+        return brPattern.matcher(replacedBElements).replaceAll("\n").trim();
+    }
+
+    private String replaceBoldElements(String replacedPElements) {
+        return bPattern.matcher(replacedPElements).replaceAll("**");
+    }
+
+    private String replaceParagraphElements(@Nonnull String body) {
+        return pPattern.matcher(body).replaceAll("\n\n").replace("\n\n\n\n", "\n\n").trim();
+    }
+
+
 }
