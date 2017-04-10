@@ -7,6 +7,8 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -29,16 +31,23 @@ public class EntityCrudKitSettingsRenamer {
     }
 
     public void performRename() {
+        System.out.println("Renaming mongodb collections" );
         try {
+            Optional<String> collection = StreamSupport.stream(database.listCollectionNames().spliterator(), false)
+                                                       .filter(name -> name.equals(OLD_NAME))
+                                                       .findFirst();
+            if (!collection.isPresent()) {
+                return;
+            }
             MongoCollection<Document> entityCrudKitSettingsCollection = database.getCollection(
                     OLD_NAME);
             entityCrudKitSettingsCollection.renameCollection(new MongoNamespace(database.getName(),
                                                                                 NEW_NAME));
         } catch (MongoServerException e) {
-            System.out.printf("An error occurred whilst renaming the %s collection to %s.  Cause: %s.\n",
-                               OLD_NAME,
-                               NEW_NAME,
-                               e.getMessage());
+            System.out.printf("An error occurred whilst renaming the %s collection to %s.  Cause: %s.\n" ,
+                              OLD_NAME,
+                              NEW_NAME,
+                              e.getMessage());
         }
     }
 }
