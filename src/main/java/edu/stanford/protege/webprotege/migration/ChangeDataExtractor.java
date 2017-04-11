@@ -33,6 +33,8 @@ public class ChangeDataExtractor {
 
     private long lastTimeStamp = -1L;
 
+    private int changeSetCount = 0;
+
     @Nullable
     private String lastModifiedBy = null;
 
@@ -49,6 +51,14 @@ public class ChangeDataExtractor {
                                   new OWLDataFactoryImpl(),
                                   (list, skipSetting, filePosition) -> handleChangeData(list),
                                   SkipSetting.SKIP_DATA);
+        }
+    }
+
+    public long getChangeLogSizeInBytes() {
+        try {
+            return Files.size(changeDataFile);
+        } catch (IOException e) {
+            return 0;
         }
     }
 
@@ -92,6 +102,7 @@ public class ChangeDataExtractor {
     }
 
     private void handleChangeData(OntologyChangeRecordList list) {
+        changeSetCount++;
         long ts = list.getTimestamp();
         if(firstTimeStamp == -1L) {
             firstTimeStamp = ts;
