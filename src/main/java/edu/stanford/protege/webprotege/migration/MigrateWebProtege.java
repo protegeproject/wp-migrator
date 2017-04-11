@@ -1,10 +1,12 @@
 package edu.stanford.protege.webprotege.migration;
 
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import edu.stanford.smi.protege.server.metaproject.MetaProject;
 import edu.stanford.smi.protege.server.metaproject.impl.MetaProjectImpl;
 import org.apache.commons.cli.*;
+import org.bson.Document;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -42,6 +44,7 @@ public class MigrateWebProtege {
     public void run() {
         MongoClient mongoClient = new MongoClient(mongoHost, mongoPort);
         MongoDatabase database = mongoClient.getDatabase(databaseName);
+        MongoCollection<Document> migrationMetadata = database.getCollection(DbCollections.MIGRATION_METADATA);
         try {
             ProjectDirectoryResolver projectDirectoryResolver = new ProjectDirectoryResolver(dataDirectory);
             MetaProjectResolver metaProjectResolver = new MetaProjectResolver(dataDirectory);
@@ -51,7 +54,8 @@ public class MigrateWebProtege {
                     new CollectionInit(database),
                     new MetaProjectMigrator(metaProject,
                                             new ProjectDetailsConverterFactory(projectDirectoryResolver,
-                                                                               changeLogFileResolver),
+                                                                               changeLogFileResolver,
+                                                                               migrationMetadata),
                                             database),
                     new NotesMigrator(
                             metaProject,

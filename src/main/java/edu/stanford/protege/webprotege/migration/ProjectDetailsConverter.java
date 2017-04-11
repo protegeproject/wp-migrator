@@ -1,11 +1,13 @@
 package edu.stanford.protege.webprotege.migration;
 
+import com.mongodb.client.MongoCollection;
 import edu.stanford.smi.protege.server.metaproject.ProjectInstance;
 import edu.stanford.smi.protege.server.metaproject.User;
 import org.bson.Document;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
@@ -33,13 +35,17 @@ public class ProjectDetailsConverter {
 
     private final ChangeLogFileResolver changeLogFileResolver;
 
+    private final MongoCollection<Document> migrationMetadataCollection;
+
 
     public ProjectDetailsConverter(ProjectInstance projectInstance,
                                    ProjectDirectoryResolver projectDirectoryResolver,
-                                   ChangeLogFileResolver changeLogFileResolver) {
+                                   ChangeLogFileResolver changeLogFileResolver,
+                                   MongoCollection<Document> migrationMetadataCollection) {
         this.projectInstance = checkNotNull(projectInstance);
         this.projectDirectoryResolver = checkNotNull(projectDirectoryResolver);
         this.changeLogFileResolver = checkNotNull(changeLogFileResolver);
+        this.migrationMetadataCollection = checkNotNull(migrationMetadataCollection);
     }
 
     public Optional<Document> convert() {
@@ -86,8 +92,12 @@ public class ProjectDetailsConverter {
                     else {
                         document.append(MODIFIED_BY, user);
                     }
-
                 });
+                Document metadata = new Document();
+                metadata.putAll(document);
+                metadata.append("changeLogSize", changeDataExtractor.getChangeLogSizeInBytes())
+                        .append("changeSetCount", changeDataExtractor.getChangeSetCount());
+                migrationMetadataCollection.insertOne(metadata);
             } catch (Throwable e) {
                 System.out.printf("\tCould not read change data file.  Modification data not migrated. Cause: %s\n", e.getMessage());
             }

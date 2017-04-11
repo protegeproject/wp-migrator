@@ -13,4 +13,5 @@ public interface DbCollections {
 
     String PROJECT_DETAILS = "ProjectDetails";
 
+    String MIGRATION_METADATA = "MigrationMetadata";
 }

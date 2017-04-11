@@ -109,6 +109,7 @@ public class MetaProjectMigrator {
         System.out.printf("-------------------------\n\n");
 
         MongoCollection<Document> projectDetailsCollection = database.getCollection(DbCollections.PROJECT_DETAILS);
+        MongoCollection<Document> migrationMetadataCollection = database.getCollection(DbCollections.MIGRATION_METADATA);
         Set<ProjectInstance> projects = metaProject.getProjects();
         int projectCount = projects.size();
         int count = 0;

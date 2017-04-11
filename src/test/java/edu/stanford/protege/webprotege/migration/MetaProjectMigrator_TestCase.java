@@ -52,7 +52,8 @@ public class MetaProjectMigrator_TestCase {
                 metaProject,
                 new ProjectDetailsConverterFactory(
                         projectDirectoryResolver,
-                        changeLogFileResolver
+                        changeLogFileResolver,
+                        database.getCollection(DbCollections.MIGRATION_METADATA)
                 ),
                 database
         );

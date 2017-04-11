@@ -62,6 +62,10 @@ public class ChangeDataExtractor {
         }
     }
 
+    public int getChangeSetCount() {
+        return changeSetCount;
+    }
+
     /**
      * Returns the timestamp of when the change log was created.
      * @return The timestamp.  An empty value if the extractor has not been run or if the change log is corrupt.
