@@ -2,6 +2,7 @@ package edu.stanford.protege.webprotege.migration;
 
 import org.semanticweb.binaryowl.BinaryOWLMetadata;
 import org.semanticweb.binaryowl.BinaryOWLOntologyChangeLog;
+import org.semanticweb.binaryowl.BinaryOWLParseException;
 import org.semanticweb.binaryowl.change.OntologyChangeRecordList;
 import org.semanticweb.binaryowl.chunk.SkipSetting;
 import sun.rmi.runtime.Log;
@@ -47,7 +48,7 @@ public class ChangeDataExtractor {
             changeLog.readChanges(is,
                                   new OWLDataFactoryImpl(),
                                   (list, skipSetting, filePosition) -> handleChangeData(list),
-                                  SkipSetting.SKIP_NONE);
+                                  SkipSetting.SKIP_DATA);
         }
     }
 

@@ -7,6 +7,7 @@ import edu.stanford.smi.protege.server.metaproject.ProjectInstance;
 import org.bson.Document;
 import org.protege.notesapi.NotesException;
 import org.protege.notesapi.NotesManager;
+import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentParserFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -75,7 +76,8 @@ public class NotesMigrator {
     public void performMigration() {
         try {
             System.out.printf("Migrating notes\n");
-            notesManager.addIRIMapper(new SimpleIRIMapper(CHANGES_ONTOLOGY_IRI, getChangeOntologyDocumentIRI()));
+            notesManager.getOntologyParsers().add(new BinaryOWLOntologyDocumentParserFactory());
+            notesManager.getIRIMappers().add(new SimpleIRIMapper(CHANGES_ONTOLOGY_IRI, getChangeOntologyDocumentIRI()));
             OWLOntology chao = notesManager.loadOntology(CHANGES_ONTOLOGY_IRI);
             // Believe it or not, the following line appears inconsequential, like a bug almost,
             // but it's absolutely necessary for the proper functioning of this notes API thing.

@@ -12,6 +12,7 @@ import org.bson.Document;
 
 import javax.annotation.Nonnull;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +31,8 @@ public class MetaProjectMigrator {
     private final ProjectDetailsConverterFactory projectDetailsConverterFactory;
 
     private final MongoDatabase database;
+
+    private final Set<String> migratedProjectDetails = new HashSet<>();
 
     public MetaProjectMigrator(@Nonnull MetaProject metaProject,
                                @Nonnull ProjectDetailsConverterFactory projectDetailsConverterFactory,
@@ -55,20 +58,22 @@ public class MetaProjectMigrator {
         int counter = 0;
         for(ProjectInstance projectInstance : projects) {
             counter++;
-            System.out.printf("[Project %s] Migrating permissions (%d of %d)\n", projectInstance.getName(), counter, projects.size());
-            PermissionsConverter converter = new PermissionsConverter(projectInstance);
-            List<Document> convert = converter.convert();
-            for(Document document : convert) {
-                try {
-                    roleAssignmentCollections.insertOne(document);
-                } catch (Exception e) {
-                    System.out.printf("\tAn error occurred whilst inserting role assignments for project %s.  " +
-                                              "Role assignments for this project have been skipped.\n\tCause: %s.\n",
-                                      projectInstance.getName(),
-                                      e.getMessage());
+            if (migratedProjectDetails.contains(projectInstance.getName())) {
+                System.out.printf("[Project %s] Migrating permissions (%d of %d)\n", projectInstance.getName(), counter, projects.size());
+                PermissionsConverter converter = new PermissionsConverter(projectInstance);
+                List<Document> convert = converter.convert();
+                for(Document document : convert) {
+                    try {
+                        roleAssignmentCollections.insertOne(document);
+                    } catch (Exception e) {
+                        System.out.printf("\tAn error occurred whilst inserting role assignments for project %s.  " +
+                                                  "Role assignments for this project have been skipped.\n\tCause: %s.\n",
+                                          projectInstance.getName(),
+                                          e.getMessage());
+                    }
                 }
+                System.out.printf("\tMigrated %d permissions\n\n", convert.size());
             }
-            System.out.printf("\tMigrated %d permissions\n\n", convert.size());
         }
         System.out.printf("Finished migrating project permissions\n\n");
     }
@@ -113,7 +118,10 @@ public class MetaProjectMigrator {
                 count++;
                 System.out.printf("[Project %s] (%d/%d) Migrating project details\n", projectInstance.getName(), count, projectCount);
                 ProjectDetailsConverter converter = projectDetailsConverterFactory.get(projectInstance);
-                converter.convert().ifPresent(projectDetailsCollection::insertOne);
+                converter.convert().ifPresent(doc -> {
+                    projectDetailsCollection.insertOne(doc);
+                    migratedProjectDetails.add(projectInstance.getName());
+                });
             } catch (DuplicateKeyException e) {
                 System.out.printf("\tProject details already exist for %s.  " +
                                           "This project has been skipped.\n",

@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -67,10 +68,10 @@ public class MetaProjectMigrator_TestCase {
         assertThat(projectDetailsDocument.getString("displayName"), is("Migration Test Project"));
         assertThat(projectDetailsDocument.getString("description"), is("This is a project for the WebProtege 2.6 to 3.0 migration."));
 
-        assertThat(projectDetailsDocument.getLong("createdAt"), is(1491584695423L));
+        assertThat(projectDetailsDocument.getDate("createdAt"), is(new Date(1491584695423L)));
         assertThat(projectDetailsDocument.getString("createdBy"), is("M Horridge"));
 
-        assertThat(projectDetailsDocument.getLong("modifiedAt"), is(1491584850790L));
+        assertThat(projectDetailsDocument.getDate("modifiedAt"), is(new Date(1491584850790L)));
         assertThat(projectDetailsDocument.getString("modifiedBy"), is("M Horridge"));
     }
 

@@ -6,6 +6,7 @@ import org.bson.Document;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -75,9 +76,9 @@ public class ProjectDetailsConverter {
                 ChangeDataExtractor changeDataExtractor = new ChangeDataExtractor(changeDataFile);
                 changeDataExtractor.run();
 
-                changeDataExtractor.getCreatedAtTimestamp().ifPresent(createdAt -> document.append(CREATED_AT, createdAt));
+                changeDataExtractor.getCreatedAtTimestamp().ifPresent(createdAt -> document.append(CREATED_AT, new Date(createdAt)));
                 owner.ifPresent(userId -> document.append(CREATED_BY, userId));
-                changeDataExtractor.getLastModifiedTimestamp().ifPresent(modifiedAt -> document.append(MODIFIED_AT, modifiedAt));
+                changeDataExtractor.getLastModifiedTimestamp().ifPresent(modifiedAt -> document.append(MODIFIED_AT, new Date(modifiedAt)));
                 changeDataExtractor.getLastModifiedBy().ifPresent(user -> {
                     if("system".equals(user)) {
                         document.append(MODIFIED_BY, owner.get());
@@ -87,7 +88,7 @@ public class ProjectDetailsConverter {
                     }
 
                 });
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 System.out.printf("\tCould not read change data file.  Modification data not migrated. Cause: %s\n", e.getMessage());
             }
         });

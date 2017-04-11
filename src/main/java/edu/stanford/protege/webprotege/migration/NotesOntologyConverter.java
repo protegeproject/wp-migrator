@@ -8,7 +8,6 @@ import org.protege.notesapi.notes.AnnotatableThing;
 import org.protege.notesapi.notes.Annotation;
 import org.protege.notesapi.oc.impl.DefaultOntologyComponent;
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentParserFactory;
-import org.semanticweb.owlapi.io.OWLParserFactoryRegistry;
 import org.semanticweb.owlapi.model.*;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
@@ -26,11 +25,6 @@ import static java.util.stream.Collectors.toList;
  */
 @SuppressWarnings({"OptionalUsedAsFieldOrParameterType" , "Guava"})
 public class NotesOntologyConverter {
-
-    static {
-        // Yuck!
-        OWLParserFactoryRegistry.getInstance().registerParserFactory(new BinaryOWLOntologyDocumentParserFactory());
-    }
 
     public static final IRI CHANGES_ONTOLOGY_IRI = IRI.create("http://protege.stanford.edu/ontologies/ChAO/changes.owl" );
 
